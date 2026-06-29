@@ -1,9 +1,16 @@
 import { useState } from "react";
 
-import Header from "./components/dashboard/Header";
 import BalanceCard from "./components/dashboard/BalanceCard";
 import StatCard from "./components/dashboard/StatCard";
 import NewTransactionModal from "./components/dashboard/NewTransactionModal";
+
+import { transactions } from "./data/mockData";
+import {
+  getBalance,
+  getExpenseTotal,
+  getIncomeTotal,
+  formatCurrency,
+} from "./utils/finance";
 
 import {
   ArrowDownCircle,
@@ -19,6 +26,10 @@ import {
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
+
+  const incomeTotal = getIncomeTotal(transactions);
+  const expenseTotal = getExpenseTotal(transactions);
+  const balance = getBalance(transactions);
 
   return (
     <main className="min-h-screen bg-slate-100 p-6">
@@ -37,13 +48,42 @@ function App() {
           </button>
         </header>
 
-        <BalanceCard />
+        <div className="mb-6 rounded-[2rem] bg-violet-700 p-8 text-white shadow-xl">
+          <p className="text-violet-200">Saldo total do casal</p>
+
+          <h2 className="mt-2 text-5xl font-black">
+            {formatCurrency(balance)}
+          </h2>
+
+          <p className="mt-4 text-violet-100">
+            Resumo financeiro com base nos lançamentos do mês.
+          </p>
+        </div>
 
         <section className="mb-6 grid gap-4 md:grid-cols-4">
-          <StatCard icon={<ArrowUpCircle />} title="Receitas" value="R$ 0,00" />
-          <StatCard icon={<ArrowDownCircle />} title="Despesas" value="R$ 0,00" />
-          <StatCard icon={<PiggyBank />} title="Economia" value="R$ 0,00" />
-          <StatCard icon={<Heart />} title="Compartilhado" value="R$ 0,00" />
+          <StatCard
+            icon={<ArrowUpCircle />}
+            title="Receitas"
+            value={formatCurrency(incomeTotal)}
+          />
+
+          <StatCard
+            icon={<ArrowDownCircle />}
+            title="Despesas"
+            value={formatCurrency(expenseTotal)}
+          />
+
+          <StatCard
+            icon={<PiggyBank />}
+            title="Saldo"
+            value={formatCurrency(balance)}
+          />
+
+          <StatCard
+            icon={<Heart />}
+            title="Lançamentos"
+            value={transactions.length}
+          />
         </section>
 
         <section className="grid gap-6 lg:grid-cols-2">
@@ -52,9 +92,9 @@ function App() {
               Últimos lançamentos
             </h3>
 
-            <Transaction icon={<ShoppingCart />} title="Mercado" category="Alimentação" value="- R$ 0,00" />
-            <Transaction icon={<Utensils />} title="Restaurante" category="Lazer" value="- R$ 0,00" />
-            <Transaction icon={<Car />} title="Transporte" category="Mobilidade" value="- R$ 0,00" />
+            <Transaction icon={<ShoppingCart />} title="Mercado" category="Alimentação" value="- R$ 320,00" />
+            <Transaction icon={<Utensils />} title="Restaurante" category="Lazer" value="- R$ 150,00" />
+            <Transaction icon={<Car />} title="Compra parcelada" category="Compras" value="- R$ 100,00" />
           </div>
 
           <div className="space-y-6">
@@ -70,7 +110,8 @@ function App() {
               </div>
 
               <p className="text-slate-600">
-                Assim que vocês começarem a lançar receitas e despesas, o DuoCash vai mostrar dicas automáticas para economizar e alcançar metas.
+                Vocês têm saldo positivo de {formatCurrency(balance)} neste mês.
+                O próximo passo será criar projeções automáticas para os meses seguintes.
               </p>
             </div>
 
