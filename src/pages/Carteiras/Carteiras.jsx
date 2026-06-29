@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Landmark, Plus, Wallet } from "lucide-react";
+
+import NewWalletModal from "../../components/wallets/NewWalletModal";
 
 const wallets = [
   {
@@ -22,6 +25,8 @@ const wallets = [
 ];
 
 export default function Carteiras() {
+  const [openModal, setOpenModal] = useState(false);
+
   return (
     <section className="mx-auto max-w-6xl">
       <header className="mb-8 flex items-center justify-between">
@@ -29,12 +34,16 @@ export default function Carteiras() {
           <h1 className="text-3xl font-black text-violet-700">
             Carteiras
           </h1>
+
           <p className="text-slate-500">
             Cadastre onde seu dinheiro fica.
           </p>
         </div>
 
-        <button className="flex items-center gap-2 rounded-2xl bg-violet-700 px-5 py-3 font-bold text-white shadow-lg hover:bg-violet-800">
+        <button
+          onClick={() => setOpenModal(true)}
+          className="flex items-center gap-2 rounded-2xl bg-violet-700 px-5 py-3 font-bold text-white shadow-lg hover:bg-violet-800"
+        >
           <Plus size={20} />
           Nova carteira
         </button>
@@ -59,6 +68,7 @@ export default function Carteiras() {
                 <h2 className="text-xl font-black text-slate-900">
                   {wallet.name}
                 </h2>
+
                 <p className="text-sm text-slate-500">
                   {wallet.type}
                 </p>
@@ -66,12 +76,18 @@ export default function Carteiras() {
             </div>
 
             <p className="text-sm text-slate-500">Saldo atual</p>
+
             <strong className="mt-1 block text-3xl text-slate-900">
               {wallet.balance}
             </strong>
           </div>
         ))}
       </section>
+
+      <NewWalletModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+      />
     </section>
   );
 }
