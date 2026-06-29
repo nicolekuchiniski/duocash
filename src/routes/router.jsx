@@ -1,0 +1,55 @@
+import { createBrowserRouter } from "react-router-dom";
+
+import AppLayout from "../components/layout/AppLayout";
+import Dashboard from "../pages/Dashboard/Dashboard";
+
+function PlaceholderPage({ title }) {
+  return (
+    <section className="mx-auto max-w-6xl">
+      <h1 className="text-3xl font-black text-violet-700">
+        {title}
+      </h1>
+
+      <p className="mt-2 text-slate-500">
+        Essa página será construída em breve.
+      </p>
+    </section>
+  );
+}
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <AppLayout />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "lancamentos",
+        element: <PlaceholderPage title="Lançamentos" />,
+      },
+      {
+        path: "casal",
+        element: <PlaceholderPage title="Casal" />,
+      },
+      {
+        path: "carteiras",
+        element: <PlaceholderPage title="Carteiras" />,
+      },
+      {
+        path: "cartoes",
+        element: <PlaceholderPage title="Cartões" />,
+      },
+      {
+        path: "metas",
+        element: <PlaceholderPage title="Metas" />,
+      },
+      {
+        path: "configuracoes",
+        element: <PlaceholderPage title="Configurações" />,
+      },
+    ],
+  },
+]);
