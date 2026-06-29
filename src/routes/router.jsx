@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import AppLayout from "../components/layout/AppLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
+import Carteiras from "../pages/Carteiras/Carteiras";
 
 function PlaceholderPage({ title }) {
   return (
@@ -35,9 +36,9 @@ export const router = createBrowserRouter([
         element: <PlaceholderPage title="Casal" />,
       },
       {
-        path: "carteiras",
-        element: <PlaceholderPage title="Carteiras" />,
-      },
+  path: "carteiras",
+  element: <Carteiras />,
+},
       {
         path: "cartoes",
         element: <PlaceholderPage title="Cartões" />,
