@@ -1,14 +1,15 @@
 import { useState } from "react";
 
-import BalanceCard from "./components/dashboard/BalanceCard";
 import StatCard from "./components/dashboard/StatCard";
 import NewTransactionModal from "./components/dashboard/NewTransactionModal";
+import UserSummaryCard from "./components/dashboard/UserSummaryCard";
 
 import { transactions } from "./data/mockData";
 import {
   getBalance,
   getExpenseTotal,
   getIncomeTotal,
+  getUserSummary,
   formatCurrency,
 } from "./utils/finance";
 
@@ -30,6 +31,9 @@ function App() {
   const incomeTotal = getIncomeTotal(transactions);
   const expenseTotal = getExpenseTotal(transactions);
   const balance = getBalance(transactions);
+
+  const nicole = getUserSummary(transactions, "Nicole");
+  const emanuel = getUserSummary(transactions, "Emanuel");
 
   return (
     <main className="min-h-screen bg-slate-100 p-6">
@@ -61,28 +65,25 @@ function App() {
         </div>
 
         <section className="mb-6 grid gap-4 md:grid-cols-4">
-          <StatCard
-            icon={<ArrowUpCircle />}
-            title="Receitas"
-            value={formatCurrency(incomeTotal)}
+          <StatCard icon={<ArrowUpCircle />} title="Receitas" value={formatCurrency(incomeTotal)} />
+          <StatCard icon={<ArrowDownCircle />} title="Despesas" value={formatCurrency(expenseTotal)} />
+          <StatCard icon={<PiggyBank />} title="Saldo" value={formatCurrency(balance)} />
+          <StatCard icon={<Heart />} title="Lançamentos" value={transactions.length} />
+        </section>
+
+        <section className="mb-6 grid gap-4 md:grid-cols-2">
+          <UserSummaryCard
+            name="👩 Nicole"
+            income={formatCurrency(nicole.income)}
+            expenses={formatCurrency(nicole.expenses)}
+            balance={formatCurrency(nicole.balance)}
           />
 
-          <StatCard
-            icon={<ArrowDownCircle />}
-            title="Despesas"
-            value={formatCurrency(expenseTotal)}
-          />
-
-          <StatCard
-            icon={<PiggyBank />}
-            title="Saldo"
-            value={formatCurrency(balance)}
-          />
-
-          <StatCard
-            icon={<Heart />}
-            title="Lançamentos"
-            value={transactions.length}
+          <UserSummaryCard
+            name="👨 Emanuel"
+            income={formatCurrency(emanuel.income)}
+            expenses={formatCurrency(emanuel.expenses)}
+            balance={formatCurrency(emanuel.balance)}
           />
         </section>
 
