@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
   Home,
   WalletCards,
@@ -8,16 +9,18 @@ import {
   Target,
   Settings,
   Wallet,
+  Tags,
 } from "lucide-react";
 
 const menuItems = [
-  { label: "Dashboard", icon: Home },
-  { label: "Lançamentos", icon: WalletCards },
-  { label: "Casal", icon: BarChart3 },
-  { label: "Carteiras", icon: Landmark },
-  { label: "Cartões", icon: CreditCard },
-  { label: "Metas", icon: Target },
-  { label: "Configurações", icon: Settings },
+  { label: "Dashboard", icon: Home, path: "/" },
+  { label: "Lançamentos", icon: WalletCards, path: "/lancamentos" },
+  { label: "Casal", icon: BarChart3, path: "/casal" },
+  { label: "Carteiras", icon: Landmark, path: "/carteiras" },
+  { label: "Cartões", icon: CreditCard, path: "/cartoes" },
+  { label: "Categorias", icon: Tags, path: "/categorias" },
+  { label: "Metas", icon: Target, path: "/metas" },
+  { label: "Configurações", icon: Settings, path: "/configuracoes" },
 ];
 
 export default function Sidebar() {
@@ -35,10 +38,7 @@ export default function Sidebar() {
         {expanded ? (
           <div className="flex items-center gap-3">
             <div className="rounded-2xl bg-violet-100 p-3">
-              <Wallet
-                size={28}
-                className="text-violet-700"
-              />
+              <Wallet size={28} className="text-violet-700" />
             </div>
 
             <div>
@@ -53,10 +53,7 @@ export default function Sidebar() {
           </div>
         ) : (
           <div className="rounded-2xl bg-violet-100 p-3">
-            <Wallet
-              size={24}
-              className="text-violet-700"
-            />
+            <Wallet size={24} className="text-violet-700" />
           </div>
         )}
       </div>
@@ -66,13 +63,18 @@ export default function Sidebar() {
           const Icon = item.icon;
 
           return (
-            <button
+            <NavLink
               key={item.label}
-              className={`flex w-full items-center rounded-2xl transition-all duration-200 hover:bg-violet-50 hover:text-violet-700 ${
-                expanded
-                  ? "gap-4 px-4 py-3"
-                  : "justify-center py-3"
-              }`}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex w-full items-center rounded-2xl transition-all duration-200 ${
+                  expanded ? "gap-4 px-4 py-3" : "justify-center py-3"
+                } ${
+                  isActive
+                    ? "bg-violet-100 text-violet-700"
+                    : "text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                }`
+              }
             >
               <Icon size={22} />
 
@@ -81,7 +83,7 @@ export default function Sidebar() {
                   {item.label}
                 </span>
               )}
-            </button>
+            </NavLink>
           );
         })}
       </nav>

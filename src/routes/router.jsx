@@ -47,6 +47,10 @@ export const router = createBrowserRouter([
         element: <PlaceholderPage title="Metas" />,
       },
       {
+  path: "categorias",
+  element: <PlaceholderPage title="Categorias" />,
+},
+      {
         path: "configuracoes",
         element: <PlaceholderPage title="Configurações" />,
       },
