@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { CreditCard, Plus } from "lucide-react";
+
+import NewCardModal from "../../components/cards/NewCardModal";
 
 const cards = [
   {
@@ -18,6 +21,8 @@ const cards = [
 ];
 
 export default function Cartoes() {
+  const [openModal, setOpenModal] = useState(false);
+
   return (
     <section className="mx-auto max-w-6xl">
       <header className="mb-8 flex items-center justify-between">
@@ -31,7 +36,10 @@ export default function Cartoes() {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 rounded-2xl bg-violet-700 px-5 py-3 font-bold text-white shadow-lg hover:bg-violet-800">
+        <button
+          onClick={() => setOpenModal(true)}
+          className="flex items-center gap-2 rounded-2xl bg-violet-700 px-5 py-3 font-bold text-white shadow-lg hover:bg-violet-800"
+        >
           <Plus size={20} />
           Novo cartão
         </button>
@@ -61,9 +69,7 @@ export default function Cartoes() {
 
             <div className="grid gap-4 md:grid-cols-3">
               <div>
-                <p className="text-sm text-slate-500">
-                  Limite
-                </p>
+                <p className="text-sm text-slate-500">Limite</p>
 
                 <strong className="text-lg text-slate-900">
                   {card.limit}
@@ -71,9 +77,7 @@ export default function Cartoes() {
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">
-                  Fechamento
-                </p>
+                <p className="text-sm text-slate-500">Fechamento</p>
 
                 <strong className="text-lg text-slate-900">
                   Dia {card.closingDay}
@@ -81,9 +85,7 @@ export default function Cartoes() {
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">
-                  Vencimento
-                </p>
+                <p className="text-sm text-slate-500">Vencimento</p>
 
                 <strong className="text-lg text-slate-900">
                   Dia {card.dueDay}
@@ -93,6 +95,11 @@ export default function Cartoes() {
           </div>
         ))}
       </section>
+
+      <NewCardModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+      />
     </section>
   );
 }
