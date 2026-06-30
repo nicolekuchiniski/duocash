@@ -6,6 +6,7 @@ import Carteiras from "../pages/Carteiras/Carteiras";
 import Cartoes from "../pages/Cartoes/Cartoes";
 import InstallmentsTest from "../pages/Testes/InstallmentsTest"
 import Lancamentos from "../pages/Lancamentos/Lancamentos";
+import Categorias from "../pages/Categorias/Categorias";
 
 function PlaceholderPage({ title }) {
   return (
@@ -52,7 +53,7 @@ export const router = createBrowserRouter([
       },
       {
   path: "categorias",
-  element: <PlaceholderPage title="Categorias" />,
+  element: <Categorias />,
 },
       {
         path: "configuracoes",
