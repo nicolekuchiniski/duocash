@@ -1,8 +1,15 @@
 import { useState } from "react";
 
+import {
+  wallets,
+  cards,
+  categories,
+} from "../../data/financeData";
+
 export default function NewTransactionModal({ isOpen, onClose }) {
   const [type, setType] = useState("expense");
   const [paymentMethod, setPaymentMethod] = useState("pix");
+  const [creditType, setCreditType] = useState("cash");
 
   if (!isOpen) return null;
 
@@ -10,6 +17,7 @@ export default function NewTransactionModal({ isOpen, onClose }) {
   const isIncome = type === "income";
   const isTransfer = type === "transfer";
   const isCredit = paymentMethod === "credit";
+  const isInstallment = creditType === "installment";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
@@ -19,6 +27,7 @@ export default function NewTransactionModal({ isOpen, onClose }) {
             <h2 className="text-2xl font-black text-slate-900">
               Novo lançamento
             </h2>
+
             <p className="text-sm text-slate-500">
               Receita, despesa ou transferência interna.
             </p>
@@ -70,29 +79,45 @@ export default function NewTransactionModal({ isOpen, onClose }) {
         <div className="space-y-4">
           <input
             className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+            placeholder="Descrição. Ex: Mercado, salário, parcela celular"
+          />
+
+          <input
+            className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
             placeholder="Valor"
           />
 
           {!isTransfer && (
-            <input
-              className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-              placeholder="Categoria"
-            />
+            <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
+              <option>Selecione a categoria</option>
+
+              {categories.map((category) => (
+                <option key={category}>{category}</option>
+              ))}
+            </select>
           )}
 
           {isIncome && (
-            <input
-              className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-              placeholder="Carteira de entrada"
-            />
+            <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
+              <option>Carteira de entrada</option>
+
+              {wallets.map((wallet) => (
+                <option key={wallet.id}>{wallet.name}</option>
+              ))}
+            </select>
           )}
 
           {isExpense && (
             <>
-              <input
-                className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-                placeholder="Carteira"
-              />
+              {!isCredit && (
+                <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
+                  <option>Carteira de saída</option>
+
+                  {wallets.map((wallet) => (
+                    <option key={wallet.id}>{wallet.name}</option>
+                  ))}
+                </select>
+              )}
 
               <select
                 value={paymentMethod}
@@ -103,44 +128,66 @@ export default function NewTransactionModal({ isOpen, onClose }) {
                 <option value="debit">Débito</option>
                 <option value="credit">Crédito</option>
                 <option value="cash">Dinheiro</option>
-                <option value="transfer">Transferência</option>
               </select>
 
               {isCredit && (
-                <div className="grid grid-cols-2 gap-3">
+                <>
                   <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
-                    <option>À vista</option>
-                    <option>Parcelado</option>
+                    <option>Selecione o cartão</option>
+
+                    {cards.map((card) => (
+                      <option key={card.id}>{card.name}</option>
+                    ))}
                   </select>
 
-                  <input
-                    type="number"
-                    min="1"
-                    className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-                    placeholder="Parcelas"
-                  />
-                </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <select
+                      value={creditType}
+                      onChange={(event) => setCreditType(event.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+                    >
+                      <option value="cash">Crédito à vista</option>
+                      <option value="installment">Parcelado</option>
+                    </select>
+
+                    {isInstallment && (
+                      <input
+                        type="number"
+                        min="2"
+                        max="48"
+                        className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+                        placeholder="Parcelas"
+                      />
+                    )}
+                  </div>
+                </>
               )}
             </>
           )}
 
           {isTransfer && (
             <>
-              <input
-                className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-                placeholder="Carteira de origem"
-              />
+              <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
+                <option>Carteira de origem</option>
 
-              <input
-                className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-                placeholder="Carteira de destino"
-              />
+                {wallets.map((wallet) => (
+                  <option key={wallet.id}>{wallet.name}</option>
+                ))}
+              </select>
+
+              <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
+                <option>Carteira de destino</option>
+
+                {wallets.map((wallet) => (
+                  <option key={wallet.id}>{wallet.name}</option>
+                ))}
+              </select>
             </>
           )}
 
           <input
             className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-            placeholder="Tags: #mercado #extra"
+            placeholder="Tags: #mercado #extra #revenda"
           />
 
           <textarea

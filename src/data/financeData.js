@@ -35,3 +35,18 @@ export const cards = [
     dueDay: 20,
   },
 ];
+
+export const categories = [
+  "Salário",
+  "Alimentação",
+  "Moradia",
+  "Transporte",
+  "Lazer",
+  "Compras",
+  "Saúde",
+  "Educação",
+  "Revenda",
+  "Garimpo",
+  "Extra",
+  "Outros",
+];
