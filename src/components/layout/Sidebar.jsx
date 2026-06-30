@@ -16,11 +16,14 @@ const menuItems = [
   { label: "Dashboard", icon: Home, path: "/" },
   { label: "Lançamentos", icon: WalletCards, path: "/lancamentos" },
   { label: "Casal", icon: BarChart3, path: "/casal" },
+    { label: "Metas", icon: Target, path: "/metas" },
+  { label: "Análises", icon: BarChart3, path: "/analises" },
   { label: "Carteiras", icon: Landmark, path: "/carteiras" },
   { label: "Cartões", icon: CreditCard, path: "/cartoes" },
   { label: "Categorias", icon: Tags, path: "/categorias" },
-  { label: "Metas", icon: Target, path: "/metas" },
+
   { label: "Configurações", icon: Settings, path: "/configuracoes" },
+  
 ];
 
 export default function Sidebar() {

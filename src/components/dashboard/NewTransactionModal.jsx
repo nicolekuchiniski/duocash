@@ -83,9 +83,9 @@ export default function NewTransactionModal({ isOpen, onClose }) {
           />
 
           <input
-            className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-            placeholder="Valor"
-          />
+  type="date"
+  className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+/>
 
           {!isTransfer && (
             <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">

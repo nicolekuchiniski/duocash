@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BarChart3, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 
 import { transactions } from "../../data/financeData";
@@ -8,24 +9,69 @@ import {
   getIncomeTotal,
 } from "../../utils/finance";
 
+import {
+  buildMonthKey,
+  filterTransactionsByMonth,
+  monthOptions,
+  yearOptions,
+} from "../../utils/monthlyAnalysis";
+
 export default function Analises() {
-  const income = getIncomeTotal(transactions);
-  const expenses = getExpenseTotal(transactions);
-  const balance = getBalance(transactions);
+  const [selectedMonth, setSelectedMonth] = useState("06");
+  const [selectedYear, setSelectedYear] = useState(2026);
+
+  const selectedMonthKey = buildMonthKey(selectedYear, selectedMonth);
+
+  const monthlyTransactions = filterTransactionsByMonth(
+    transactions,
+    selectedMonthKey
+  );
+
+  const income = getIncomeTotal(monthlyTransactions);
+  const expenses = getExpenseTotal(monthlyTransactions);
+  const balance = getBalance(monthlyTransactions);
 
   const expensePercentage =
     income > 0 ? Math.min((expenses / income) * 100, 100) : 0;
 
   return (
     <section className="mx-auto max-w-6xl">
-      <header className="mb-8">
-        <h1 className="text-3xl font-black text-violet-700">
-          Análises
-        </h1>
+      <header className="mb-8 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-violet-700">
+            Análises
+          </h1>
 
-        <p className="text-slate-500">
-          Entenda como o dinheiro está entrando e saindo.
-        </p>
+          <p className="text-slate-500">
+            Histórico da saúde financeira do casal.
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <select
+            value={selectedMonth}
+            onChange={(event) => setSelectedMonth(event.target.value)}
+            className="rounded-2xl border border-slate-200 bg-white p-4 font-bold text-slate-700 outline-none focus:border-violet-600"
+          >
+            {monthOptions.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedYear}
+            onChange={(event) => setSelectedYear(Number(event.target.value))}
+            className="rounded-2xl border border-slate-200 bg-white p-4 font-bold text-slate-700 outline-none focus:border-violet-600"
+          >
+            {yearOptions.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
       </header>
 
       <section className="mb-6 grid gap-4 md:grid-cols-3">
@@ -33,14 +79,14 @@ export default function Analises() {
           icon={TrendingUp}
           title="Receitas"
           value={formatCurrency(income)}
-          description="Total recebido no período."
+          description="Total recebido no mês."
         />
 
         <AnalysisCard
           icon={TrendingDown}
           title="Despesas"
           value={formatCurrency(expenses)}
-          description="Total gasto no período."
+          description="Total gasto no mês."
         />
 
         <AnalysisCard
@@ -59,11 +105,11 @@ export default function Analises() {
 
           <div>
             <h2 className="text-xl font-black text-slate-900">
-              Uso da renda
+              Saúde financeira do mês
             </h2>
 
             <p className="text-sm text-slate-500">
-              Quanto da renda já foi comprometida com despesas.
+              Percentual da renda comprometida com despesas.
             </p>
           </div>
         </div>
@@ -78,6 +124,12 @@ export default function Analises() {
         <strong className="text-violet-700">
           {expensePercentage.toFixed(0)}% da renda usada
         </strong>
+
+        {monthlyTransactions.length === 0 && (
+          <p className="mt-4 rounded-2xl bg-slate-100 p-4 text-sm font-semibold text-slate-500">
+            Nenhum lançamento encontrado para este mês.
+          </p>
+        )}
       </section>
     </section>
   );
