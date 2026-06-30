@@ -2,23 +2,8 @@ import { useState } from "react";
 import { CreditCard, Plus } from "lucide-react";
 
 import NewCardModal from "../../components/cards/NewCardModal";
-
-const cards = [
-  {
-    id: 1,
-    name: "Nubank",
-    limit: "R$ 3.000,00",
-    closingDay: 8,
-    dueDay: 15,
-  },
-  {
-    id: 2,
-    name: "Mercado Pago",
-    limit: "R$ 2.500,00",
-    closingDay: 10,
-    dueDay: 20,
-  },
-];
+import { cards } from "../../data/financeData";
+import { formatCurrency } from "../../utils/finance";
 
 export default function Cartoes() {
   const [openModal, setOpenModal] = useState(false);
@@ -72,7 +57,7 @@ export default function Cartoes() {
                 <p className="text-sm text-slate-500">Limite</p>
 
                 <strong className="text-lg text-slate-900">
-                  {card.limit}
+                  {formatCurrency(card.limit)}
                 </strong>
               </div>
 

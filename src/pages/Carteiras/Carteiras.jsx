@@ -2,27 +2,8 @@ import { useState } from "react";
 import { Landmark, Plus, Wallet } from "lucide-react";
 
 import NewWalletModal from "../../components/wallets/NewWalletModal";
-
-const wallets = [
-  {
-    id: 1,
-    name: "Nubank",
-    type: "Conta digital",
-    balance: "R$ 2.450,00",
-  },
-  {
-    id: 2,
-    name: "Mercado Pago",
-    type: "Conta digital",
-    balance: "R$ 680,00",
-  },
-  {
-    id: 3,
-    name: "Dinheiro",
-    type: "Carteira física",
-    balance: "R$ 120,00",
-  },
-];
+import { wallets } from "../../data/financeData";
+import { formatCurrency } from "../../utils/finance";
 
 export default function Carteiras() {
   const [openModal, setOpenModal] = useState(false);
@@ -78,7 +59,7 @@ export default function Carteiras() {
             <p className="text-sm text-slate-500">Saldo atual</p>
 
             <strong className="mt-1 block text-3xl text-slate-900">
-              {wallet.balance}
+              {formatCurrency(wallet.balance)}
             </strong>
           </div>
         ))}
