@@ -10,6 +10,7 @@ import Categorias from "../pages/Categorias/Categorias";
 import Metas from "../pages/Metas/Metas";
 import Casal from "../pages/Casal/Casal";
 import Configuracoes from "../pages/Configuracoes/Configuracoes";
+import Analises from "../pages/Analises/Analises";
 
 function PlaceholderPage({ title }) {
   return (
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
       {
   path: "teste-parcelas",
   element: <InstallmentsTest />,
+},
+{
+  path: "analises",
+  element: <Analises />,
 },
     ],
   },
