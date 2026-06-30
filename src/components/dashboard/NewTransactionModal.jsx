@@ -61,12 +61,22 @@ export default function NewTransactionModal({ isOpen, onClose, onSave }) {
       return;
     }
 
+    if (!isTransfer && !category) {
+      alert("Selecione uma categoria.");
+      return;
+    }
+
+    if ((isIncome || (isExpense && !isCredit)) && !wallet) {
+      alert("Selecione uma carteira.");
+      return;
+    }
+
     const formattedTags = tags
       .split(" ")
       .filter(Boolean)
       .map((tag) => tag.replace("#", ""));
 
-    if (isCredit && isInstallment) {
+    if (isExpense && isCredit) {
       const selectedCard = cards.find((card) => card.name === cardName);
 
       if (!selectedCard) {
@@ -74,23 +84,49 @@ export default function NewTransactionModal({ isOpen, onClose, onSave }) {
         return;
       }
 
-      const generatedInstallments = generateInstallments({
-        title,
-        amount: numericAmount,
-        installments: Number(installments),
-        startDate: date,
-        card: selectedCard,
-        category,
-        tags: formattedTags,
-      });
+      if (isInstallment) {
+        const installmentsQuantity = Number(installments);
 
-      generatedInstallments.forEach((transaction) => {
-        onSave({
-          ...transaction,
-          user: currentUser,
-          wallet: selectedCard.name,
-          note,
+        if (!installmentsQuantity || installmentsQuantity < 2) {
+          alert("Informe uma quantidade de parcelas válida.");
+          return;
+        }
+
+        const generatedInstallments = generateInstallments({
+          title,
+          amount: numericAmount,
+          installments: installmentsQuantity,
+          startDate: date,
+          card: selectedCard,
+          category,
+          tags: formattedTags,
         });
+
+        generatedInstallments.forEach((transaction) => {
+          onSave({
+            ...transaction,
+            user: currentUser,
+            wallet: selectedCard.name,
+            note,
+          });
+        });
+
+        resetForm();
+        onClose();
+        return;
+      }
+
+      onSave({
+        user: currentUser,
+        type: "expense",
+        title,
+        category,
+        wallet: selectedCard.name,
+        paymentMethod: "credit",
+        amount: numericAmount,
+        date,
+        tags: formattedTags,
+        note,
       });
 
       resetForm();
@@ -103,7 +139,7 @@ export default function NewTransactionModal({ isOpen, onClose, onSave }) {
       type,
       title,
       category,
-      wallet: isCredit ? cardName : wallet,
+      wallet,
       paymentMethod: isExpense ? paymentMethod : null,
       amount: numericAmount,
       date,
@@ -177,14 +213,14 @@ export default function NewTransactionModal({ isOpen, onClose, onSave }) {
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-            placeholder="Descrição. Ex: Mercado, salário, parcela celular"
+            placeholder="Descrição. Ex: Mercado, salário, celular"
           />
 
           <input
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
             className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-            placeholder="Valor"
+            placeholder="Valor total. Ex: 1000"
           />
 
           <input
@@ -291,38 +327,12 @@ export default function NewTransactionModal({ isOpen, onClose, onSave }) {
                         min="2"
                         max="48"
                         className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-                        placeholder="Parcelas"
+                        placeholder="Parcelas. Ex: 10"
                       />
                     )}
                   </div>
                 </>
               )}
-            </>
-          )}
-
-          {isTransfer && (
-            <>
-              <select
-                value={wallet}
-                onChange={(event) => setWallet(event.target.value)}
-                className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-              >
-                <option value="">Carteira de origem</option>
-
-                {wallets.map((wallet) => (
-                  <option key={wallet.id} value={wallet.name}>
-                    {wallet.name}
-                  </option>
-                ))}
-              </select>
-
-              <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
-                <option>Carteira de destino</option>
-
-                {wallets.map((wallet) => (
-                  <option key={wallet.id}>{wallet.name}</option>
-                ))}
-              </select>
             </>
           )}
 

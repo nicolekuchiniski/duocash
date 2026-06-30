@@ -9,11 +9,12 @@ export function FinanceProvider({ children }) {
 
   function addTransaction(transaction) {
     setTransactions((currentTransactions) => [
-      ...currentTransactions,
       {
         ...transaction,
         id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
       },
+      ...currentTransactions,
     ]);
   }
 
