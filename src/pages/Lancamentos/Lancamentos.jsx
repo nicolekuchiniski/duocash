@@ -1,14 +1,39 @@
+import { useState } from "react";
 import {
   ArrowDownCircle,
   ArrowUpCircle,
   CreditCard,
+  Trash2,
   Wallet,
 } from "lucide-react";
 
-import { transactions } from "../../data/financeData";
+import { transactions as initialTransactions } from "../../data/financeData";
 import { formatCurrency } from "../../utils/finance";
 
+const currentUser = "Nicole";
+
+function formatDate(date) {
+  const [year, month, day] = date.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 export default function Lancamentos() {
+  const [transactions, setTransactions] = useState(initialTransactions);
+
+  function handleDelete(transactionId) {
+    const confirmed = confirm(
+      "Tem certeza que deseja excluir este lançamento?"
+    );
+
+    if (!confirmed) return;
+
+    setTransactions((currentTransactions) =>
+      currentTransactions.filter(
+        (transaction) => transaction.id !== transactionId
+      )
+    );
+  }
+
   return (
     <section className="mx-auto max-w-6xl">
       <header className="mb-8">
@@ -26,6 +51,7 @@ export default function Lancamentos() {
           {transactions.map((transaction) => {
             const isIncome = transaction.type === "income";
             const isCredit = transaction.paymentMethod === "credit";
+            const canDelete = transaction.user === currentUser;
 
             return (
               <div
@@ -62,7 +88,7 @@ export default function Lancamentos() {
 
                     <p className="text-sm text-slate-500">
                       {transaction.user} • {transaction.category} •{" "}
-                      {transaction.date}
+                      {formatDate(transaction.date)}
                     </p>
 
                     <p className="mt-1 flex items-center gap-1 text-xs text-slate-400">
@@ -72,14 +98,26 @@ export default function Lancamentos() {
                   </div>
                 </div>
 
-                <strong
-                  className={
-                    isIncome ? "text-emerald-600" : "text-red-600"
-                  }
-                >
-                  {isIncome ? "+ " : "- "}
-                  {formatCurrency(transaction.amount)}
-                </strong>
+                <div className="flex items-center gap-4">
+                  <strong
+                    className={
+                      isIncome ? "text-emerald-600" : "text-red-600"
+                    }
+                  >
+                    {isIncome ? "+ " : "- "}
+                    {formatCurrency(transaction.amount)}
+                  </strong>
+
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDelete(transaction.id)}
+                      className="rounded-xl bg-slate-100 p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+                      title="Excluir lançamento"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}
