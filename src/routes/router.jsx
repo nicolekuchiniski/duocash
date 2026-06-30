@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "../components/layout/AppLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Carteiras from "../pages/Carteiras/Carteiras";
+import Cartoes from "../pages/Cartoes/Cartoes";
 
 function PlaceholderPage({ title }) {
   return (
@@ -40,9 +41,9 @@ export const router = createBrowserRouter([
   element: <Carteiras />,
 },
       {
-        path: "cartoes",
-        element: <PlaceholderPage title="Cartões" />,
-      },
+  path: "cartoes",
+  element: <Cartoes />,
+},
       {
         path: "metas",
         element: <PlaceholderPage title="Metas" />,
