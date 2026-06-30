@@ -7,7 +7,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import { transactions as initialTransactions } from "../../data/financeData";
+import { useFinance } from "../../contexts/FinanceContext";
 import { formatCurrency } from "../../utils/finance";
 
 const currentUser = "Nicole";
@@ -18,7 +18,7 @@ function formatDate(date) {
 }
 
 export default function Lancamentos() {
-  const [transactions, setTransactions] = useState(initialTransactions);
+ const { transactions, deleteTransaction } = useFinance();
 
   function handleDelete(transactionId) {
     const confirmed = confirm(
@@ -27,11 +27,7 @@ export default function Lancamentos() {
 
     if (!confirmed) return;
 
-    setTransactions((currentTransactions) =>
-      currentTransactions.filter(
-        (transaction) => transaction.id !== transactionId
-      )
-    );
+    deleteTransaction(transactionId);
   }
 
   return (

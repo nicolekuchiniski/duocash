@@ -4,7 +4,7 @@ import StatCard from "../../components/dashboard/StatCard";
 import NewTransactionModal from "../../components/dashboard/NewTransactionModal";
 import UserSummaryCard from "../../components/dashboard/UserSummaryCard";
 
-import { transactions } from "../../data/financeData";
+import { useFinance } from "../../contexts/FinanceContext";
 import {
   getBalance,
   getExpenseTotal,
@@ -27,7 +27,7 @@ import {
 
 export default function Dashboard() {
   const [openModal, setOpenModal] = useState(false);
-
+const { transactions, addTransaction } = useFinance();
   const incomeTotal = getIncomeTotal(transactions);
   const expenseTotal = getExpenseTotal(transactions);
   const balance = getBalance(transactions);
@@ -178,10 +178,11 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <NewTransactionModal
-        isOpen={openModal}
-        onClose={() => setOpenModal(false)}
-      />
+   <NewTransactionModal
+  isOpen={openModal}
+  onClose={() => setOpenModal(false)}
+  onSave={addTransaction}
+/>
     </section>
   );
 }

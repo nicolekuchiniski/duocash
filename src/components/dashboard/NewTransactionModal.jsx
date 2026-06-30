@@ -6,10 +6,24 @@ import {
   categories,
 } from "../../data/financeData";
 
-export default function NewTransactionModal({ isOpen, onClose }) {
+import { generateInstallments } from "../../utils/installments";
+
+const currentUser = "Nicole";
+
+export default function NewTransactionModal({ isOpen, onClose, onSave }) {
   const [type, setType] = useState("expense");
   const [paymentMethod, setPaymentMethod] = useState("pix");
   const [creditType, setCreditType] = useState("cash");
+
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [date, setDate] = useState("");
+  const [category, setCategory] = useState("");
+  const [wallet, setWallet] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [installments, setInstallments] = useState("");
+  const [tags, setTags] = useState("");
+  const [note, setNote] = useState("");
 
   if (!isOpen) return null;
 
@@ -19,9 +33,91 @@ export default function NewTransactionModal({ isOpen, onClose }) {
   const isCredit = paymentMethod === "credit";
   const isInstallment = creditType === "installment";
 
+  function resetForm() {
+    setType("expense");
+    setPaymentMethod("pix");
+    setCreditType("cash");
+    setTitle("");
+    setAmount("");
+    setDate("");
+    setCategory("");
+    setWallet("");
+    setCardName("");
+    setInstallments("");
+    setTags("");
+    setNote("");
+  }
+
+  function handleSave() {
+    if (!title || !amount || !date) {
+      alert("Preencha descrição, valor e data.");
+      return;
+    }
+
+    const numericAmount = Number(amount.replace(",", "."));
+
+    if (!numericAmount || numericAmount <= 0) {
+      alert("Informe um valor válido.");
+      return;
+    }
+
+    const formattedTags = tags
+      .split(" ")
+      .filter(Boolean)
+      .map((tag) => tag.replace("#", ""));
+
+    if (isCredit && isInstallment) {
+      const selectedCard = cards.find((card) => card.name === cardName);
+
+      if (!selectedCard) {
+        alert("Selecione um cartão.");
+        return;
+      }
+
+      const generatedInstallments = generateInstallments({
+        title,
+        amount: numericAmount,
+        installments: Number(installments),
+        startDate: date,
+        card: selectedCard,
+        category,
+        tags: formattedTags,
+      });
+
+      generatedInstallments.forEach((transaction) => {
+        onSave({
+          ...transaction,
+          user: currentUser,
+          wallet: selectedCard.name,
+          note,
+        });
+      });
+
+      resetForm();
+      onClose();
+      return;
+    }
+
+    onSave({
+      user: currentUser,
+      type,
+      title,
+      category,
+      wallet: isCredit ? cardName : wallet,
+      paymentMethod: isExpense ? paymentMethod : null,
+      amount: numericAmount,
+      date,
+      tags: formattedTags,
+      note,
+    });
+
+    resetForm();
+    onClose();
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-      <div className="w-full max-w-lg rounded-[2rem] bg-white p-6 shadow-2xl">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-black text-slate-900">
@@ -78,31 +174,54 @@ export default function NewTransactionModal({ isOpen, onClose }) {
 
         <div className="space-y-4">
           <input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
             className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
             placeholder="Descrição. Ex: Mercado, salário, parcela celular"
           />
 
           <input
-  type="date"
-  className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
-/>
+            value={amount}
+            onChange={(event) => setAmount(event.target.value)}
+            className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+            placeholder="Valor"
+          />
+
+          <input
+            type="date"
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+            className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+          />
 
           {!isTransfer && (
-            <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
-              <option>Selecione a categoria</option>
+            <select
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+              className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+            >
+              <option value="">Selecione a categoria</option>
 
               {categories.map((category) => (
-                <option key={category}>{category}</option>
+                <option key={category} value={category}>
+                  {category}
+                </option>
               ))}
             </select>
           )}
 
           {isIncome && (
-            <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
-              <option>Carteira de entrada</option>
+            <select
+              value={wallet}
+              onChange={(event) => setWallet(event.target.value)}
+              className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+            >
+              <option value="">Carteira de entrada</option>
 
               {wallets.map((wallet) => (
-                <option key={wallet.id}>{wallet.name}</option>
+                <option key={wallet.id} value={wallet.name}>
+                  {wallet.name}
+                </option>
               ))}
             </select>
           )}
@@ -110,11 +229,17 @@ export default function NewTransactionModal({ isOpen, onClose }) {
           {isExpense && (
             <>
               {!isCredit && (
-                <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
-                  <option>Carteira de saída</option>
+                <select
+                  value={wallet}
+                  onChange={(event) => setWallet(event.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+                >
+                  <option value="">Carteira de saída</option>
 
                   {wallets.map((wallet) => (
-                    <option key={wallet.id}>{wallet.name}</option>
+                    <option key={wallet.id} value={wallet.name}>
+                      {wallet.name}
+                    </option>
                   ))}
                 </select>
               )}
@@ -132,11 +257,17 @@ export default function NewTransactionModal({ isOpen, onClose }) {
 
               {isCredit && (
                 <>
-                  <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
-                    <option>Selecione o cartão</option>
+                  <select
+                    value={cardName}
+                    onChange={(event) => setCardName(event.target.value)}
+                    className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+                  >
+                    <option value="">Selecione o cartão</option>
 
                     {cards.map((card) => (
-                      <option key={card.id}>{card.name}</option>
+                      <option key={card.id} value={card.name}>
+                        {card.name}
+                      </option>
                     ))}
                   </select>
 
@@ -152,6 +283,10 @@ export default function NewTransactionModal({ isOpen, onClose }) {
 
                     {isInstallment && (
                       <input
+                        value={installments}
+                        onChange={(event) =>
+                          setInstallments(event.target.value)
+                        }
                         type="number"
                         min="2"
                         max="48"
@@ -167,11 +302,17 @@ export default function NewTransactionModal({ isOpen, onClose }) {
 
           {isTransfer && (
             <>
-              <select className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600">
-                <option>Carteira de origem</option>
+              <select
+                value={wallet}
+                onChange={(event) => setWallet(event.target.value)}
+                className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
+              >
+                <option value="">Carteira de origem</option>
 
                 {wallets.map((wallet) => (
-                  <option key={wallet.id}>{wallet.name}</option>
+                  <option key={wallet.id} value={wallet.name}>
+                    {wallet.name}
+                  </option>
                 ))}
               </select>
 
@@ -186,16 +327,23 @@ export default function NewTransactionModal({ isOpen, onClose }) {
           )}
 
           <input
+            value={tags}
+            onChange={(event) => setTags(event.target.value)}
             className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
             placeholder="Tags: #mercado #extra #revenda"
           />
 
           <textarea
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
             className="w-full rounded-2xl border border-slate-200 p-4 outline-none focus:border-violet-600"
             placeholder="Observação"
           />
 
-          <button className="w-full rounded-2xl bg-violet-700 p-4 font-black text-white hover:bg-violet-800">
+          <button
+            onClick={handleSave}
+            className="w-full rounded-2xl bg-violet-700 p-4 font-black text-white hover:bg-violet-800"
+          >
             Salvar lançamento
           </button>
         </div>
