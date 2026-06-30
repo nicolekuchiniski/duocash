@@ -4,6 +4,7 @@ import AppLayout from "../components/layout/AppLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Carteiras from "../pages/Carteiras/Carteiras";
 import Cartoes from "../pages/Cartoes/Cartoes";
+import InstallmentsTest from "../pages/Testes/InstallmentsTest"
 
 function PlaceholderPage({ title }) {
   return (
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
         path: "configuracoes",
         element: <PlaceholderPage title="Configurações" />,
       },
+      {
+  path: "teste-parcelas",
+  element: <InstallmentsTest />,
+},
     ],
   },
 ]);
