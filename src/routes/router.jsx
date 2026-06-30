@@ -7,6 +7,7 @@ import Cartoes from "../pages/Cartoes/Cartoes";
 import InstallmentsTest from "../pages/Testes/InstallmentsTest"
 import Lancamentos from "../pages/Lancamentos/Lancamentos";
 import Categorias from "../pages/Categorias/Categorias";
+import Metas from "../pages/Metas/Metas";
 
 function PlaceholderPage({ title }) {
   return (
@@ -48,9 +49,9 @@ export const router = createBrowserRouter([
   element: <Cartoes />,
 },
       {
-        path: "metas",
-        element: <PlaceholderPage title="Metas" />,
-      },
+  path: "metas",
+  element: <Metas />,
+},
       {
   path: "categorias",
   element: <Categorias />,
