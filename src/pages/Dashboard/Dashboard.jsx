@@ -4,7 +4,7 @@ import StatCard from "../../components/dashboard/StatCard";
 import NewTransactionModal from "../../components/dashboard/NewTransactionModal";
 import UserSummaryCard from "../../components/dashboard/UserSummaryCard";
 
-import { transactions } from "../../data/mockData";
+import { transactions } from "../../data/financeData";
 import {
   getBalance,
   getExpenseTotal,

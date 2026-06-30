@@ -5,6 +5,7 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import Carteiras from "../pages/Carteiras/Carteiras";
 import Cartoes from "../pages/Cartoes/Cartoes";
 import InstallmentsTest from "../pages/Testes/InstallmentsTest"
+import Lancamentos from "../pages/Lancamentos/Lancamentos";
 
 function PlaceholderPage({ title }) {
   return (
@@ -30,9 +31,9 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "lancamentos",
-        element: <PlaceholderPage title="Lançamentos" />,
-      },
+  path: "lancamentos",
+  element: <Lancamentos />,
+},
       {
         path: "casal",
         element: <PlaceholderPage title="Casal" />,
