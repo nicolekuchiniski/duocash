@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { BarChart3, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 
-import { transactions } from "../../data/financeData";
+import { useFinance } from "../../contexts/FinanceContext";
+
 import {
   formatCurrency,
   getBalance,
@@ -17,6 +18,8 @@ import {
 } from "../../utils/monthlyAnalysis";
 
 export default function Analises() {
+  const { transactions } = useFinance();
+
   const [selectedMonth, setSelectedMonth] = useState("06");
   const [selectedYear, setSelectedYear] = useState(2026);
 

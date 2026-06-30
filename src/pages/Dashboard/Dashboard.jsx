@@ -5,6 +5,7 @@ import NewTransactionModal from "../../components/dashboard/NewTransactionModal"
 import UserSummaryCard from "../../components/dashboard/UserSummaryCard";
 
 import { useFinance } from "../../contexts/FinanceContext";
+
 import {
   getBalance,
   getExpenseTotal,
@@ -27,13 +28,17 @@ import {
 
 export default function Dashboard() {
   const [openModal, setOpenModal] = useState(false);
-const { transactions, addTransaction } = useFinance();
+
+  const { transactions, addTransaction } = useFinance();
+
   const incomeTotal = getIncomeTotal(transactions);
   const expenseTotal = getExpenseTotal(transactions);
   const balance = getBalance(transactions);
 
   const nicole = getUserSummary(transactions, "Nicole");
   const emanuel = getUserSummary(transactions, "Emanuel");
+
+  const latestTransactions = transactions.slice(0, 3);
 
   return (
     <section className="mx-auto max-w-6xl">
@@ -42,7 +47,10 @@ const { transactions, addTransaction } = useFinance();
           <h1 className="text-3xl font-black text-violet-700">
             Dashboard
           </h1>
-          <p className="text-slate-500">Olá, Nicole 👋</p>
+
+          <p className="text-slate-500">
+            Olá, Nicole 👋
+          </p>
         </div>
 
         <button
@@ -54,14 +62,16 @@ const { transactions, addTransaction } = useFinance();
       </header>
 
       <div className="mb-6 rounded-[2rem] bg-violet-700 p-8 text-white shadow-xl">
-        <p className="text-violet-200">Saldo total do casal</p>
+        <p className="text-violet-200">
+          Saldo total do casal
+        </p>
 
         <h2 className="mt-2 text-5xl font-black">
           {formatCurrency(balance)}
         </h2>
 
         <p className="mt-4 text-violet-100">
-          Resumo financeiro com base nos lançamentos do mês.
+          Resumo financeiro com base nos lançamentos salvos.
         </p>
       </div>
 
@@ -113,26 +123,24 @@ const { transactions, addTransaction } = useFinance();
             Últimos lançamentos
           </h3>
 
-          <Transaction
-            icon={<ShoppingCart />}
-            title="Mercado"
-            category="Alimentação"
-            value="- R$ 320,00"
-          />
+          {latestTransactions.length === 0 && (
+            <p className="rounded-2xl bg-slate-100 p-4 text-sm font-semibold text-slate-500">
+              Nenhum lançamento cadastrado.
+            </p>
+          )}
 
-          <Transaction
-            icon={<Utensils />}
-            title="Restaurante"
-            category="Lazer"
-            value="- R$ 150,00"
-          />
-
-          <Transaction
-            icon={<Car />}
-            title="Compra parcelada"
-            category="Compras"
-            value="- R$ 100,00"
-          />
+          {latestTransactions.map((transaction) => (
+            <Transaction
+              key={transaction.id}
+              icon={getTransactionIcon(transaction)}
+              title={transaction.title}
+              category={transaction.category}
+              value={`${transaction.type === "income" ? "+ " : "- "}${formatCurrency(
+                transaction.amount
+              )}`}
+              isIncome={transaction.type === "income"}
+            />
+          ))}
         </div>
 
         <div className="space-y-6">
@@ -148,8 +156,9 @@ const { transactions, addTransaction } = useFinance();
             </div>
 
             <p className="text-slate-600">
-              Vocês têm saldo positivo de {formatCurrency(balance)} neste mês.
-              O próximo passo será criar projeções automáticas.
+              O saldo atual do casal é de {formatCurrency(balance)}.
+              Conforme vocês lançarem receitas e despesas, esse resumo será
+              atualizado automaticamente.
             </p>
           </div>
 
@@ -163,7 +172,10 @@ const { transactions, addTransaction } = useFinance();
                 <h3 className="text-xl font-black text-slate-900">
                   Meta da viagem
                 </h3>
-                <p className="text-sm text-slate-500">Progresso inicial</p>
+
+                <p className="text-sm text-slate-500">
+                  Progresso inicial
+                </p>
               </div>
             </div>
 
@@ -178,30 +190,65 @@ const { transactions, addTransaction } = useFinance();
         </div>
       </section>
 
-   <NewTransactionModal
-  isOpen={openModal}
-  onClose={() => setOpenModal(false)}
-  onSave={addTransaction}
-/>
+      <NewTransactionModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={addTransaction}
+      />
     </section>
   );
 }
 
-function Transaction({ icon, title, category, value }) {
+function getTransactionIcon(transaction) {
+  if (transaction.type === "income") {
+    return <ArrowUpCircle />;
+  }
+
+  if (transaction.paymentMethod === "credit") {
+    return <Car />;
+  }
+
+  if (transaction.category === "Alimentação") {
+    return <ShoppingCart />;
+  }
+
+  if (transaction.category === "Lazer") {
+    return <Utensils />;
+  }
+
+  return <ArrowDownCircle />;
+}
+
+function Transaction({ icon, title, category, value, isIncome }) {
   return (
     <div className="flex items-center justify-between border-b border-slate-100 py-4 last:border-0">
       <div className="flex items-center gap-3">
-        <div className="rounded-2xl bg-violet-100 p-3 text-violet-700">
+        <div
+          className={`rounded-2xl p-3 ${
+            isIncome
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-violet-100 text-violet-700"
+          }`}
+        >
           {icon}
         </div>
 
         <div>
-          <p className="font-bold text-slate-900">{title}</p>
-          <p className="text-sm text-slate-500">{category}</p>
+          <p className="font-bold text-slate-900">
+            {title}
+          </p>
+
+          <p className="text-sm text-slate-500">
+            {category}
+          </p>
         </div>
       </div>
 
-      <strong className="text-slate-900">{value}</strong>
+      <strong
+        className={isIncome ? "text-emerald-600" : "text-red-600"}
+      >
+        {value}
+      </strong>
     </div>
   );
 }
