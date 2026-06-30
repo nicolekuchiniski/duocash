@@ -8,6 +8,8 @@ import InstallmentsTest from "../pages/Testes/InstallmentsTest"
 import Lancamentos from "../pages/Lancamentos/Lancamentos";
 import Categorias from "../pages/Categorias/Categorias";
 import Metas from "../pages/Metas/Metas";
+import Casal from "../pages/Casal/Casal";
+import Configuracoes from "../pages/Configuracoes/Configuracoes";
 
 function PlaceholderPage({ title }) {
   return (
@@ -37,13 +39,14 @@ export const router = createBrowserRouter([
   element: <Lancamentos />,
 },
       {
-        path: "casal",
-        element: <PlaceholderPage title="Casal" />,
-      },
+  path: "casal",
+  element: <Casal />,
+},
       {
   path: "carteiras",
   element: <Carteiras />,
 },
+
       {
   path: "cartoes",
   element: <Cartoes />,
@@ -57,9 +60,9 @@ export const router = createBrowserRouter([
   element: <Categorias />,
 },
       {
-        path: "configuracoes",
-        element: <PlaceholderPage title="Configurações" />,
-      },
+  path: "configuracoes",
+  element: <Configuracoes />,
+},
       {
   path: "teste-parcelas",
   element: <InstallmentsTest />,
