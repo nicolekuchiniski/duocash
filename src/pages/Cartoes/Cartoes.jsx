@@ -1,12 +1,24 @@
 import { useState } from "react";
-import { CreditCard, Plus } from "lucide-react";
+import { CreditCard, Plus, Trash2 } from "lucide-react";
 
 import NewCardModal from "../../components/cards/NewCardModal";
-import { cards } from "../../data/financeData";
+import { useFinance } from "../../contexts/FinanceContext";
 import { formatCurrency } from "../../utils/finance";
 
 export default function Cartoes() {
   const [openModal, setOpenModal] = useState(false);
+
+  const { cards, addCard, deleteCard } = useFinance();
+
+  function handleDeleteCard(cardId, cardName) {
+    const confirmed = confirm(
+      `Tem certeza que deseja excluir o cartão ${cardName}?`
+    );
+
+    if (!confirmed) return;
+
+    deleteCard(cardId);
+  }
 
   return (
     <section className="mx-auto max-w-6xl">
@@ -36,25 +48,37 @@ export default function Cartoes() {
             key={card.id}
             className="rounded-[2rem] bg-white p-6 shadow-sm"
           >
-            <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-2xl bg-violet-100 p-3 text-violet-700">
-                <CreditCard size={24} />
+            <div className="mb-6 flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="rounded-2xl bg-violet-100 p-3 text-violet-700">
+                  <CreditCard size={24} />
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-black text-slate-900">
+                    {card.name}
+                  </h2>
+
+                  <p className="text-sm text-slate-500">
+                    Cartão de crédito
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <h2 className="text-xl font-black text-slate-900">
-                  {card.name}
-                </h2>
-
-                <p className="text-sm text-slate-500">
-                  Cartão de crédito
-                </p>
-              </div>
+              <button
+                onClick={() => handleDeleteCard(card.id, card.name)}
+                className="rounded-xl bg-slate-100 p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+                title="Excluir cartão"
+              >
+                <Trash2 size={18} />
+              </button>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
               <div>
-                <p className="text-sm text-slate-500">Limite</p>
+                <p className="text-sm text-slate-500">
+                  Limite
+                </p>
 
                 <strong className="text-lg text-slate-900">
                   {formatCurrency(card.limit)}
@@ -62,7 +86,9 @@ export default function Cartoes() {
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">Fechamento</p>
+                <p className="text-sm text-slate-500">
+                  Fechamento
+                </p>
 
                 <strong className="text-lg text-slate-900">
                   Dia {card.closingDay}
@@ -70,7 +96,9 @@ export default function Cartoes() {
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">Vencimento</p>
+                <p className="text-sm text-slate-500">
+                  Vencimento
+                </p>
 
                 <strong className="text-lg text-slate-900">
                   Dia {card.dueDay}
@@ -84,6 +112,7 @@ export default function Cartoes() {
       <NewCardModal
         isOpen={openModal}
         onClose={() => setOpenModal(false)}
+        onSave={addCard}
       />
     </section>
   );

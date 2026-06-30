@@ -3,12 +3,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import {
   transactions as initialTransactions,
   wallets as initialWallets,
+  cards as initialCards,
 } from "../data/financeData";
 
 const FinanceContext = createContext();
 
 const TRANSACTIONS_STORAGE_KEY = "duocash_transactions";
 const WALLETS_STORAGE_KEY = "duocash_wallets";
+const CARDS_STORAGE_KEY = "duocash_cards";
 
 const transactionsWithCreatedAt = initialTransactions.map((transaction) => ({
   ...transaction,
@@ -35,9 +37,20 @@ function getInitialWallets() {
   return initialWallets;
 }
 
+function getInitialCards() {
+  const savedCards = localStorage.getItem(CARDS_STORAGE_KEY);
+
+  if (savedCards) {
+    return JSON.parse(savedCards);
+  }
+
+  return initialCards;
+}
+
 export function FinanceProvider({ children }) {
   const [transactions, setTransactions] = useState(getInitialTransactions);
   const [wallets, setWallets] = useState(getInitialWallets);
+  const [cards, setCards] = useState(getInitialCards);
 
   useEffect(() => {
     localStorage.setItem(
@@ -49,6 +62,10 @@ export function FinanceProvider({ children }) {
   useEffect(() => {
     localStorage.setItem(WALLETS_STORAGE_KEY, JSON.stringify(wallets));
   }, [wallets]);
+
+  useEffect(() => {
+    localStorage.setItem(CARDS_STORAGE_KEY, JSON.stringify(cards));
+  }, [cards]);
 
   function addTransaction(transaction) {
     setTransactions((currentTransactions) => [
@@ -85,6 +102,22 @@ export function FinanceProvider({ children }) {
     );
   }
 
+  function addCard(card) {
+    setCards((currentCards) => [
+      {
+        ...card,
+        id: crypto.randomUUID(),
+      },
+      ...currentCards,
+    ]);
+  }
+
+  function deleteCard(cardId) {
+    setCards((currentCards) =>
+      currentCards.filter((card) => card.id !== cardId)
+    );
+  }
+
   return (
     <FinanceContext.Provider
       value={{
@@ -94,6 +127,9 @@ export function FinanceProvider({ children }) {
         wallets,
         addWallet,
         deleteWallet,
+        cards,
+        addCard,
+        deleteCard,
       }}
     >
       {children}
